@@ -21,10 +21,12 @@ def exScrape(all_data, strin, arr=[]):
         while g<len(arr):
             y=0
             names=""
+            count =0
             while y<len(arr[g]):
                 for col in df.columns:
                     if ((arr[g])[y]) in col:
                         fnm=col 
+                        count=count+1
                         names=names+", "+fnm   
                 y=y+1
             if len(names)==0:
@@ -32,12 +34,14 @@ def exScrape(all_data, strin, arr=[]):
                 df1[columnname[g]]=("Information not available")
                                 
             elif len(names)>0: 
-                print y
-                stringreq= "The columns for excel document "+f+ " are/is '"+names+"' which do you wish to choose: "
-                q = str(raw_input(stringreq))
-                df1[columnname[g]]=df[q]
+                if count==1:
+                    df1[columnname[g]]=df[fnm]
+                else:
+                    stringreq= "The columns for excel document "+f+ " are/is '"+names+"' which do you wish to choose: "
+                    q = str(raw_input(stringreq))
+                    df1[columnname[g]]=df[q]
             g=g+1
-            print"Working..."
+        print"Working..."
 
         all_data= all_data.append(df1, ignore_index= True)
         print"Compiling..."   
