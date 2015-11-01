@@ -1,0 +1,66 @@
+import pandas as pd
+import glob
+
+def exScrape(all_data, strin, arr=[]):
+    columnname =[]
+    k=0
+    while k<len(arr):
+        stringasarray=", "
+        stringinput=("Search: "+stringasarray.join(arr[k])+" - What do you want to name the new columns: ")
+        input = str(raw_input(stringinput))                 
+        columnname.append(input)
+        k=k+1
+    print"Working..."
+
+    for f in glob.glob("*.xlsx"):
+        df = pd.read_excel(f)
+        g=0
+        y=0
+        df1=pd.DataFrame()
+
+        while g<len(arr):
+            y=0
+            names=""
+            while y<len(arr[g]):
+                for col in df.columns:
+                    if ((arr[g])[y]) in col:
+                        fnm=col 
+                        names=names+", "+fnm   
+                y=y+1
+            if len(names)==0:
+                print ("no columns exist which fit the search request") 
+                df1[columnname[g]]=("Information not available")
+                                
+            elif len(names)>0: 
+                print y
+                stringreq= "The columns for excel document "+f+ " are/is '"+names+"' which do you wish to choose: "
+                q = str(raw_input(stringreq))
+                df1[columnname[g]]=df[q]
+            g=g+1
+            print"Working..."
+
+        all_data= all_data.append(df1, ignore_index= True)
+        print"Compiling..."   
+
+    return all_data
+        
+            
+all_data=pd.DataFrame();
+firstname = ["name","firstname","firstName"]
+weight = ["weight","totalweight","total weight", "Wt","WEIGHT*"]
+lastname = ["last", "lastname"]
+collegename = ["name", "college"]
+number = ["number"]
+height = ["height","ht", "height","total height"]
+sort = [firstname, lastname, number, collegename, height, weight]
+all_data=exScrape(all_data,"*.xlsx",sort)
+
+
+
+
+NewProd = pd.ExcelWriter('Product.xlsx')
+
+all_data.to_excel(NewProd, sheet_name='Sheet1', startrow=0)
+NewProd.save()
+print "Done! Check your target folder for the compiled/scraped .xlsx file!"
+
